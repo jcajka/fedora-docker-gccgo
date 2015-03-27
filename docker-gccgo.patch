@@ -1,0 +1,12 @@
+diff -up docker-5ebfacda4747fb0b2473841dff9b9b771b3bcb53/hack/make.sh.gccgo docker-5ebfacda4747fb0b2473841dff9b9b771b3bcb53/hack/make.sh
+--- docker-5ebfacda4747fb0b2473841dff9b9b771b3bcb53/hack/make.sh.gccgo	2015-03-20 13:11:07.567000000 +0100
++++ docker-5ebfacda4747fb0b2473841dff9b9b771b3bcb53/hack/make.sh	2015-03-20 13:11:24.111000000 +0100
+@@ -114,7 +114,7 @@ EXTLDFLAGS_STATIC='-static'
+ # with options like -race.
+ ORIG_BUILDFLAGS=( -a -tags "netgo static_build $DOCKER_BUILDTAGS" -installsuffix netgo )
+ # see https://github.com/golang/go/issues/9369#issuecomment-69864440 for why -installsuffix is necessary here
+-BUILDFLAGS=( $BUILDFLAGS "${ORIG_BUILDFLAGS[@]}" )
++BUILDFLAGS=( $BUILDFLAGS "${ORIG_BUILDFLAGS[@]}" -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS" )
+ # Test timeout.
+ : ${TIMEOUT:=30m}
+ TESTFLAGS+=" -test.timeout=${TIMEOUT}"
