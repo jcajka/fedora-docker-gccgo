@@ -21,3 +21,6 @@ http://pkgs.fedoraproject.org/cgit/golang-github-shurcooL-sanitized_anchor_name.
 
 
 (All are based on master branch, and you need to rebuild packages in reverse order than their are listed here.)
+
+COPR repo for Fedora 22(23):
+https://copr.fedoraproject.org/coprs/jcajka/docker-gccgo/
