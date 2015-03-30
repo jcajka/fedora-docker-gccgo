@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5ebfacda4747fb0b2473841dff9b9b771b3bcb53
+%global d_commit c9c16a34cf7517353f31d1787f8c7127291e4119
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -32,7 +32,7 @@
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
 # Relabel files
-%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{name} %{_localstatedir}/run/%{name}.sock %{_localstatedir}/run/%{name}.pid %{_sharedstatedir}/%{name} %{_sysconfdir}/%{name} %{_localstatedir}/log/%{name} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{name}.service %{_sysconfdir}/%{name} &> /dev/null || :
+%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sharedstatedir}/%{repo} %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_sysconfdir}/%{repo} &> /dev/null || :
 
 # Version of SELinux we were using
 %global selinux_policyver 3.13.1-119
@@ -41,21 +41,21 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 25.git%{d_shortcommit}%{?dist}
+Release: 29.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
-URL: http://www.%{name}.com
-#Source0: https://%{import_path}/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
-Source0: https://github.com/lsm5/%{name}/archive/%{d_commit}/%{name}-%{d_shortcommit}.tar.gz
-Source1: %{name}.service
-Source2: %{name}.sysconfig
-Source3: %{name}-storage.sysconfig
-Source4: %{name}-logrotate.sh
-Source5: README.%{name}-logrotate
-Source6: %{name}-network.sysconfig
+URL: http://www.%{repo}.com
+#Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+Source1: %{repo}.service
+Source2: %{repo}.sysconfig
+Source3: %{repo}-storage.sysconfig
+Source4: %{repo}-logrotate.sh
+Source5: README.%{repo}-logrotate
+Source6: %{repo}-network.sysconfig
 Patch0: docker-gccgo.patch
 %if 0%{?fedora} >= 23
-Source7: https://github.com/fedora-cloud/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
+Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif
 BuildRequires: glibc-static
 BuildRequires: gcc-go >= 5
@@ -72,19 +72,19 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?fedora} >= 23
 Requires: selinux-policy >= 3.13.1-114
-Requires(pre): %{name}-selinux >= %{version}-%{release}
+Requires(pre): %{repo}-selinux >= %{version}-%{release}
 %endif
 
 # Resolves: rhbz#1045220
 Requires: xz
-Provides: lxc-%{name} = %{version}-%{release}
+Provides: lxc-%{repo} = %{version}-%{release}
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
 # this changed to "Provides: docker-io".
 %if 0%{?fedora} >= 22
-Provides: %{name}-io = %{version}-%{release}
-Obsoletes: %{name}-io < %{version}-21
+Provides: %{repo}-io = %{version}-%{release}
+Obsoletes: %{repo}-io < %{version}-21
 %endif
 
 %description
@@ -100,9 +100,9 @@ servers, OpenStack clusters, public instances, or combinations of the above.
 %package devel
 BuildRequires: gcc-go >= 5
 Requires: gcc-go >= 5
-Provides: %{name}-io-devel = %{version}-%{release}
-Provides: %{name}-pkg-devel = %{version}-%{release}
-Provides: %{name}-io-pkg-devel = %{version}-%{release}
+Provides: %{repo}-io-devel = %{version}-%{release}
+Provides: %{repo}-pkg-devel = %{version}-%{release}
+Provides: %{repo}-io-pkg-devel = %{version}-%{release}
 Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}) = %{version}-%{release}
@@ -202,17 +202,17 @@ This package provides the source libraries for Docker.
 
 %package fish-completion
 Summary: fish completion files for Docker
-Requires: %{name} = %{version}-%{release}
+Requires: %{repo} = %{version}-%{release}
 Requires: fish
-Provides: %{name}-io-fish-completion = %{version}-%{release}
+Provides: %{repo}-io-fish-completion = %{version}-%{release}
 
 %description fish-completion
 This package installs %{summary}.
 
 %package logrotate
 Summary: cron job to run logrotate on Docker containers
-Requires: %{name} = %{version}-%{release}
-Provides: %{name}-io-logrotate = %{version}-%{release}
+Requires: %{repo} = %{version}-%{release}
+Provides: %{repo}-io-logrotate = %{version}-%{release}
 
 %description logrotate
 This package installs %{summary}. logrotate is assumed to be installed on
@@ -228,7 +228,7 @@ Requires(post): selinux-policy-targeted >= %{selinux_policyver}
 Requires(post): policycoreutils
 Requires(post): policycoreutils-python
 Requires(post): libselinux-utils
-Provides: %{name}-io-selinux
+Provides: %{repo}-io-selinux
 
 %description selinux
 SELinux policy modules for use with Docker.
@@ -236,39 +236,41 @@ SELinux policy modules for use with Docker.
 
 %package vim
 Summary: vim syntax highlighting files for Docker
-Requires: %{name} = %{version}-%{release}
+Requires: %{repo} = %{version}-%{release}
 Requires: vim
-Provides: %{name}-io-vim = %{version}-%{release}
+Provides: %{repo}-io-vim = %{version}-%{release}
 
 %description vim
 This package installs %{summary}.
 
 %package zsh-completion
 Summary: zsh completion files for Docker
-Requires: %{name} = %{version}-%{release}
+Requires: %{repo} = %{version}-%{release}
 Requires: zsh
-Provides: %{name}-io-zsh-completion = %{version}-%{release}
+Provides: %{repo}-io-zsh-completion = %{version}-%{release}
 
 %description zsh-completion
 This package installs %{summary}.
 
 %prep
-%setup -q -n %{name}-%{d_commit}
+%setup -q -n %{repo}-%{d_commit}
+
 %patch0 -p1 -b .gccgo
+
 cp %{SOURCE5} .
 
 %if 0%{?fedora} >= 23
-# unpack %{name}-selinux
+# unpack %{repo}-selinux
 tar zxf %{SOURCE7}
 %endif
 
 %build
 # set up temporary build gopath, and put our directory there
-mkdir -p ./_build/src/github.com/%{name}
+mkdir -p ./_build/src/github.com/%{repo}
 ln -s $(pwd) ./_build/src/%{import_path}
 
 export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
-export DOCKER_BUILDTAGS="selinux btrfs_noversion"
+export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
@@ -277,8 +279,8 @@ cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
 %if 0%{?fedora} >= 23
-# build %{name}-selinux
-pushd %{name}-selinux-%{ds_commit}
+# build %{repo}-selinux
+pushd %{repo}-selinux-%{ds_commit}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
 %endif
@@ -286,51 +288,51 @@ popd
 %install
 # install binary
 install -d %{buildroot}%{_bindir}
-install -d %{buildroot}%{_libexecdir}/%{name}
+install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
 for x in bundles/*-dev; do \
-  install -p -m 755 $x/dynbinary/%{name}-*-dev %{buildroot}%{_bindir}/%{name}
-  install -p -m 755 $x/dynbinary/%{name}init-*-dev %{buildroot}%{_libexecdir}/%{name}/%{name}init
+  install -p -m 755 $x/dynbinary/%{repo}-*-dev %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-*-dev %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 docs/man/man1/%{name}*.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 docs/man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
 install -p -m 644 docs/man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
-install -p -m 644 contrib/completion/bash/%{name} %{buildroot}%{_datadir}/bash-completion/completions
+install -p -m 644 contrib/completion/bash/%{repo} %{buildroot}%{_datadir}/bash-completion/completions
 
 # install fish completion
 # create, install and own /usr/share/fish/vendor_completions.d until
 # upstream fish provides it
 install -dp %{buildroot}%{_datadir}/fish/vendor_completions.d
-install -p -m 644 contrib/completion/fish/%{name}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d
+install -p -m 644 contrib/completion/fish/%{repo}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d
 
 # install container logrotate cron script
 install -dp %{buildroot}%{_sysconfdir}/cron.daily/
-install -p -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/cron.daily/%{name}-logrotate
+install -p -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 # install vim syntax highlighting
 install -d %{buildroot}%{_datadir}/vim/vimfiles/{doc,ftdetect,syntax}
-install -p -m 644 contrib/syntax/vim/doc/%{name}file.txt %{buildroot}%{_datadir}/vim/vimfiles/doc
-install -p -m 644 contrib/syntax/vim/ftdetect/%{name}file.vim %{buildroot}%{_datadir}/vim/vimfiles/ftdetect
-install -p -m 644 contrib/syntax/vim/syntax/%{name}file.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax
+install -p -m 644 contrib/syntax/vim/doc/%{repo}file.txt %{buildroot}%{_datadir}/vim/vimfiles/doc
+install -p -m 644 contrib/syntax/vim/ftdetect/%{repo}file.vim %{buildroot}%{_datadir}/vim/vimfiles/ftdetect
+install -p -m 644 contrib/syntax/vim/syntax/%{repo}file.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax
 
 # install zsh completion
 install -d %{buildroot}%{_datadir}/zsh/site-functions
-install -p -m 644 contrib/completion/zsh/_%{name} %{buildroot}%{_datadir}/zsh/site-functions
+install -p -m 644 contrib/completion/zsh/_%{repo} %{buildroot}%{_datadir}/zsh/site-functions
 
 # install udev rules
 install -d %{buildroot}%{_sysconfdir}/udev/rules.d
-install -p contrib/udev/80-%{name}.rules %{buildroot}%{_sysconfdir}/udev/rules.d
+install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_sysconfdir}/udev/rules.d
 
 # install storage dir
-install -d %{buildroot}%{_sharedstatedir}/%{name}
+install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
@@ -338,20 +340,20 @@ install -p -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
-install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
-install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-network
-install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-storage
+install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
+install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
+install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
 %if 0%{?fedora} >= 23
 # install SELinux interfaces
 %_format INTERFACES $x.if
 install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
-install -p -m 644 %{name}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
+install -p -m 644 %{repo}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
 
 # install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
-install -m 0644 %{name}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
+install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 %endif
 
 # sources
@@ -365,36 +367,36 @@ cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
 
-# remove %{name}-selinux rpm spec file
-rm -rf %{name}-selinux-%{ds_commit}/%{name}-selinux.spec
+# remove %{repo}-selinux rpm spec file
+rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
 
 # install sources to devel
 for dir in */ ; do
     cp -rpav $dir %{buildroot}/%{gopath}/src/%{import_path}/
 done
 
-# install %{name} config directory
-install -dp %{buildroot}%{_sysconfdir}/%{name}
+# install %{repo} config directory
+install -dp %{buildroot}%{_sysconfdir}/%{repo}
 
 %check
-[ ! -e /run/%{name}.sock ] || {
+[ ! -e /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
     git clone https://%{import_path}
-    pushd %{name}
+    pushd %{repo}
     make test
     popd
     popd
 }
 
 %pre
-getent passwd %{name}root > /dev/null || %{_sbindir}/useradd -r \
-           -d %{_sharedstatedir}/%{name} -s /sbin/nologin \
-           -c "Docker User" %{name}root
+getent passwd %{repo}root > /dev/null || %{_sbindir}/useradd -r \
+           -d %{_sharedstatedir}/%{repo} -s /sbin/nologin \
+           -c "Docker User" %{repo}root
 exit 0
 
 %post
-%systemd_post %{name}
+%systemd_post %{repo}
 
 %if 0%{?fedora} >= 23
 %post selinux
@@ -408,10 +410,10 @@ fi
 %endif
 
 %preun
-%systemd_preun %{name}
+%systemd_preun %{repo}
 
 %postun
-%systemd_postun_with_restart %{name}
+%systemd_postun_with_restart %{repo}
 
 %if 0%{?fedora} >= 23
 %postun selinux
@@ -427,18 +429,18 @@ fi
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
 %doc LICENSE-vim-syntax README-vim-syntax.md
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-network
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-storage
-%{_mandir}/man1/%{name}*.1.gz
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
+%{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/Dockerfile.5.gz
-%{_bindir}/%{name}
-%{_libexecdir}/%{name}
-%{_unitdir}/%{name}.service
-%{_datadir}/bash-completion/completions/%{name}
-%dir %{_sharedstatedir}/%{name}
-%{_sysconfdir}/udev/rules.d/80-%{name}.rules
-%{_sysconfdir}/%{name}
+%{_bindir}/%{repo}
+%{_libexecdir}/%{repo}
+%{_unitdir}/%{repo}.service
+%{_datadir}/bash-completion/completions/%{repo}
+%dir %{_sharedstatedir}/%{repo}
+%{_sysconfdir}/udev/rules.d/80-%{repo}.rules
+%{_sysconfdir}/%{repo}
 
 %files devel
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -447,27 +449,39 @@ fi
 
 %files fish-completion
 %dir %{_datadir}/fish/vendor_completions.d/
-%{_datadir}/fish/vendor_completions.d/%{name}.fish
+%{_datadir}/fish/vendor_completions.d/%{repo}.fish
 
 %files logrotate
-%doc README.%{name}-logrotate
-%{_sysconfdir}/cron.daily/%{name}-logrotate
+%doc README.%{repo}-logrotate
+%{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 %if 0%{?fedora} >= 23
 %files selinux
-%doc %{name}-selinux-%{ds_commit}/README.md
+%doc %{repo}-selinux-%{ds_commit}/README.md
 %{_datadir}/selinux/*
 %endif
 
 %files vim
-%{_datadir}/vim/vimfiles/doc/%{name}file.txt
-%{_datadir}/vim/vimfiles/ftdetect/%{name}file.vim
-%{_datadir}/vim/vimfiles/syntax/%{name}file.vim
+%{_datadir}/vim/vimfiles/doc/%{repo}file.txt
+%{_datadir}/vim/vimfiles/ftdetect/%{repo}file.vim
+%{_datadir}/vim/vimfiles/syntax/%{repo}file.vim
 
 %files zsh-completion
-%{_datadir}/zsh/site-functions/_%{name}
+%{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Mar 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-29.gitc9c16a3
+- built docker @lsm5/fedora commit#c9c16a3
+
+* Mon Mar 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-28.git39c97c2
+- built docker @lsm5/fedora commit#39c97c2
+
+* Sun Mar 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-27.git937f8fc
+- built docker @lsm5/fedora commit#937f8fc
+
+* Sat Mar 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-26.gitbbc21e4
+- built docker @lsm5/fedora commit#bbc21e4
+
 * Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-25.git5ebfacd
 - move selinux post/postun to its own subpackage
 - correct docker-selinux min nvr for docker main package

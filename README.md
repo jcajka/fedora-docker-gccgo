@@ -3,7 +3,7 @@ Fedora docker(and BR) specfiles modified to use gcc-go
 
 docker.spec and docker-gccgo.patch are for docker package 
 based on:
-http://pkgs.fedoraproject.org/cgit/docker.git/commit/?id=735fdba812d21e6681cc1f0be1fd4de6f7a686e6
+http://pkgs.fedoraproject.org/cgit/docker.git/commit/?id=cd19e6d05c514e6f6ecc21a58ed58c692f00b698
 
 remaining spec files are for their respective packages.
 
