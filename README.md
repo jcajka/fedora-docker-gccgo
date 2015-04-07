@@ -9,9 +9,9 @@ Repo for s390x/ppc64(le) (Fedora 22):
 https://repos.fedorapeople.org/repos/jcajka/docker-gccgo/
 
 ## Base images
-jcajka/fedora22-ppc64
-jcajka/fedora22-ppc64le
-jcajka/fedora22-s390x
+* jcajka/fedora22-ppc64
+* jcajka/fedora22-ppc64le
+* jcajka/fedora22-s390x
 
 ## Notes
 docker.spec and docker-gccgo.patch are for docker package 
