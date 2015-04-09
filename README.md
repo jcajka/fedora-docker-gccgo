@@ -16,7 +16,7 @@ https://repos.fedorapeople.org/repos/jcajka/docker-gccgo/
 ## Notes
 docker.spec and docker-gccgo.patch are for docker package 
 based on:
-http://pkgs.fedoraproject.org/cgit/docker.git/commit/?id=08156ff8df61b2325b3a07cc81cc8706f76931db
+http://pkgs.fedoraproject.org/cgit/docker.git/commit/?id=4e50aff564a8964f6593c189cd8226d3122ba361
 
 remaining spec files are for their respective packages.
 
