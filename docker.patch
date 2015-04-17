@@ -1,0 +1,53 @@
+--- docker/docker.spec	2015-04-17 09:45:40.810929261 +0200
++++ docker.spec	2015-04-13 13:11:46.471307537 +0200
+@@ -37,6 +37,7 @@
+ # Version of SELinux we were using
+ %global selinux_policyver 3.13.1-119
+ %endif
++%global gopath /usr/share/gocode
+ 
+ Name: %{repo}
+ Version: 1.5.0
+@@ -44,7 +45,6 @@
+ Summary: Automates deployment of containerized applications
+ License: ASL 2.0
+ URL: http://www.%{repo}.com
+-ExclusiveArch: x86_64 %{arm}
+ #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+ Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+ Source1: %{repo}.service
+@@ -53,11 +53,12 @@
+ Source4: %{repo}-logrotate.sh
+ Source5: README.%{repo}-logrotate
+ Source6: %{repo}-network.sysconfig
++Patch0: docker-gccgo.patch
+ %if 0%{?fedora} >= 23
+ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
+ %endif
+ BuildRequires: glibc-static
+-BuildRequires: golang >= 1.3.3
++BuildRequires: gcc-go >= 5
+ BuildRequires: go-md2man
+ BuildRequires: device-mapper-devel
+ BuildRequires: btrfs-progs-devel
+@@ -97,8 +98,8 @@
+ servers, OpenStack clusters, public instances, or combinations of the above.
+ 
+ %package devel
+-BuildRequires: golang >= 1.2.1-3
+-Requires: golang >= 1.2.1-3
++BuildRequires: gcc-go >= 5
++Requires: gcc-go >= 5
+ Provides: %{repo}-io-devel = %{version}-%{release}
+ Provides: %{repo}-pkg-devel = %{version}-%{release}
+ Provides: %{repo}-io-pkg-devel = %{version}-%{release}
+@@ -253,6 +254,9 @@
+ 
+ %prep
+ %setup -q -n %{repo}-%{d_commit}
++
++%patch0 -p1 -b .gccgo
++
+ cp %{SOURCE5} .
+ 
+ %if 0%{?fedora} >= 23
