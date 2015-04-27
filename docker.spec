@@ -12,12 +12,17 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 1dcc59a0b40f7d29ab2e0b8fdeb0adf537dbcbaf
+%global d_commit 50ef6918debccce0d2dce9e9f3f1bba91bdab7ea
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
-%if 0%{?fedora} >= 23
+# docker-selinux conditional
+%if 0%{?fedora} > 22
+%global with_selinux 1
+%endif
+
+%if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global ds_commit 4421e0d80866b4b03f6a16c5b6bfabdf4c8bfa7c
@@ -36,12 +41,13 @@
 
 # Version of SELinux we were using
 %global selinux_policyver 3.13.1-119
-%endif
+%endif # with_selinux
+
 %global gopath /usr/share/gocode
 
 Name: %{repo}
-Version: 1.5.0
-Release: 33.git%{d_shortcommit}%{?dist}
+Version: 1.7.0
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -53,10 +59,11 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
-Patch0: docker-gccgo.patch
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
-%endif
+%endif # with_selinux
+Patch0: docker-gccgo.patch
+BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: gcc-go >= 5
 BuildRequires: go-md2man
@@ -70,21 +77,24 @@ Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 Requires: selinux-policy >= 3.13.1-114
 Requires(pre): %{repo}-selinux >= %{version}-%{release}
-%endif
+%endif # with_selinux
 
 # Resolves: rhbz#1045220
 Requires: xz
 Provides: lxc-%{repo} = %{version}-%{release}
+
+# needs tar to be able to run containers
+Requires: tar
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
 # this changed to "Provides: docker-io".
 %if 0%{?fedora} >= 22
 Provides: %{repo}-io = %{version}-%{release}
-Obsoletes: %{repo}-io < %{version}-21
+Obsoletes: %{repo}-io <= 1.5.0-19
 %endif
 
 %description
@@ -99,7 +109,7 @@ servers, OpenStack clusters, public instances, or combinations of the above.
 
 %package devel
 BuildRequires: gcc-go >= 5
-Requires: gcc-go >= 5
+Requires: libgo >= 5
 Provides: %{repo}-io-devel = %{version}-%{release}
 Provides: %{repo}-pkg-devel = %{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{version}-%{release}
@@ -218,7 +228,7 @@ Provides: %{repo}-io-logrotate = %{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -232,7 +242,7 @@ Provides: %{repo}-io-selinux
 
 %description selinux
 SELinux policy modules for use with Docker.
-%endif
+%endif # with_selinux
 
 %package vim
 Summary: vim syntax highlighting files for Docker
@@ -253,16 +263,13 @@ Provides: %{repo}-io-zsh-completion = %{version}-%{release}
 This package installs %{summary}.
 
 %prep
-%setup -q -n %{repo}-%{d_commit}
-
-%patch0 -p1 -b .gccgo
-
+%autosetup -Sgit -n %{repo}-%{d_commit}
 cp %{SOURCE5} .
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
-%endif
+%endif # with_selinux
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -278,12 +285,12 @@ docs/man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # build %{repo}-selinux
 pushd %{repo}-selinux-%{ds_commit}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
-%endif
+%endif # with_selinux
 
 %install
 # install binary
@@ -344,7 +351,7 @@ install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
 install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
 install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # install SELinux interfaces
 %_format INTERFACES $x.if
 install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
@@ -354,7 +361,7 @@ install -p -m 644 %{repo}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadi
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
-%endif
+%endif # with_selinux
 
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
@@ -398,7 +405,7 @@ exit 0
 %post
 %systemd_post %{repo}
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %post selinux
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
@@ -407,7 +414,7 @@ if %{_sbindir}/selinuxenabled ; then
 %{_sbindir}/load_policy
 %relabel_files
 fi
-%endif
+%endif # with_selinux
 
 %preun
 %systemd_preun %{repo}
@@ -415,7 +422,7 @@ fi
 %postun
 %systemd_postun_with_restart %{repo}
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -424,7 +431,7 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
-%endif
+%endif # with_selinux
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -455,11 +462,11 @@ fi
 %doc README.%{repo}-logrotate
 %{_sysconfdir}/cron.daily/%{repo}-logrotate
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %files selinux
 %doc %{repo}-selinux-%{ds_commit}/README.md
 %{_datadir}/selinux/*
-%endif
+%endif # with_selinux
 
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{repo}file.txt
@@ -470,6 +477,12 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Apr 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-2.git50ef691
+- built docker @lsm5/fedora commit#50ef691
+
+* Mon Apr 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-1
+- New version: 1.7.0, built docker         @lsm5/commit#50ef691
+
 * Sat Apr 11 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-33.git1dcc59a
 - built docker @lsm5/fedora commit#1dcc59a
 

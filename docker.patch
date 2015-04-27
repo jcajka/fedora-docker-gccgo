@@ -1,14 +1,25 @@
---- docker/docker.spec	2015-04-17 09:45:40.810929261 +0200
-+++ docker.spec	2015-04-13 13:11:46.471307537 +0200
-@@ -37,6 +37,7 @@
- # Version of SELinux we were using
- %global selinux_policyver 3.13.1-119
- %endif
-+%global gopath /usr/share/gocode
+diff --git a/docker.spec b/docker.spec
+index 2f337e8..ebd4ce4 100644
+--- a/docker.spec
++++ b/docker.spec
+@@ -18,7 +18,7 @@
+ %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
  
+ # docker-selinux conditional
+-%if 0%{?fedora} >= 22
++%if 0%{?fedora} > 22
+ %global with_selinux 1
+ %endif
+ 
+@@ -43,13 +43,14 @@
+ %global selinux_policyver 3.13.1-119
+ %endif # with_selinux
+ 
++%global gopath /usr/share/gocode
++
  Name: %{repo}
- Version: 1.5.0
-@@ -44,7 +45,6 @@
+ Version: 1.7.0
+ Release: 2.git%{d_shortcommit}%{?dist}
  Summary: Automates deployment of containerized applications
  License: ASL 2.0
  URL: http://www.%{repo}.com
@@ -16,38 +27,26 @@
  #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
  Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
  Source1: %{repo}.service
-@@ -53,11 +53,12 @@
- Source4: %{repo}-logrotate.sh
- Source5: README.%{repo}-logrotate
- Source6: %{repo}-network.sysconfig
-+Patch0: docker-gccgo.patch
- %if 0%{?fedora} >= 23
+@@ -61,9 +62,10 @@ Source6: %{repo}-network.sysconfig
+ %if 0%{?with_selinux}
  Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
- %endif
+ %endif # with_selinux
++Patch0: docker-gccgo.patch
+ BuildRequires: git
  BuildRequires: glibc-static
 -BuildRequires: golang >= 1.3.3
 +BuildRequires: gcc-go >= 5
  BuildRequires: go-md2man
  BuildRequires: device-mapper-devel
  BuildRequires: btrfs-progs-devel
-@@ -97,8 +98,8 @@
+@@ -106,8 +108,8 @@ and tests on a laptop will run at scale, in production*, on VMs, bare-metal
  servers, OpenStack clusters, public instances, or combinations of the above.
  
  %package devel
 -BuildRequires: golang >= 1.2.1-3
 -Requires: golang >= 1.2.1-3
 +BuildRequires: gcc-go >= 5
-+Requires: gcc-go >= 5
++Requires: libgo >= 5
  Provides: %{repo}-io-devel = %{version}-%{release}
  Provides: %{repo}-pkg-devel = %{version}-%{release}
  Provides: %{repo}-io-pkg-devel = %{version}-%{release}
-@@ -253,6 +254,9 @@
- 
- %prep
- %setup -q -n %{repo}-%{d_commit}
-+
-+%patch0 -p1 -b .gccgo
-+
- cp %{SOURCE5} .
- 
- %if 0%{?fedora} >= 23
