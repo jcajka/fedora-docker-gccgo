@@ -63,6 +63,7 @@ Source6: %{repo}-network.sysconfig
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
 Patch0: docker-gccgo.patch
+Patch1: docker-gccgo-aarch.patch
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: gcc-go >= 5
@@ -264,7 +265,11 @@ This package installs %{summary}.
 
 %prep
 %autosetup -Sgit -n %{repo}-%{d_commit}
+
 cp %{SOURCE5} .
+
+# use defines from 32-bit ARM, should be the same on 64-bit ARM
+cp vendor/src/github.com/kr/pty/ztypes_arm.go vendor/src/github.com/kr/pty/ztypes_arm64.go
 
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux

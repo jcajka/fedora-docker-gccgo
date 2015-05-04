@@ -1,0 +1,9 @@
+diff -up docker-50ef6918debccce0d2dce9e9f3f1bba91bdab7ea/vendor/src/github.com/docker/libcontainer/system/syscall_linux_64.go.aarch docker-50ef6918debccce0d2dce9e9f3f1bba91bdab7ea/vendor/src/github.com/docker/libcontainer/system/syscall_linux_64.go
+--- docker-50ef6918debccce0d2dce9e9f3f1bba91bdab7ea/vendor/src/github.com/docker/libcontainer/system/syscall_linux_64.go.aarch	2015-04-30 15:59:17.156085044 +0200
++++ docker-50ef6918debccce0d2dce9e9f3f1bba91bdab7ea/vendor/src/github.com/docker/libcontainer/system/syscall_linux_64.go	2015-04-30 16:00:26.029343207 +0200
+@@ -1,4 +1,4 @@
+-// +build linux,amd64 linux,ppc64 linux,ppc64le linux,s390x
++// +build linux,amd64 linux,ppc64 linux,ppc64le linux,s390x linux,arm64
+ 
+ package system
+ 
