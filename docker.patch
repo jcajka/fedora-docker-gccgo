@@ -1,13 +1,13 @@
 diff --git a/docker.spec b/docker.spec
-index 2f337e8..629ba23 100644
+index 064d48d..fb519ba 100644
 --- a/docker.spec
 +++ b/docker.spec
 @@ -18,7 +18,7 @@
  %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
  
  # docker-selinux conditional
--%if 0%{?fedora} >= 22
-+%if 0%{?fedora} > 22
+-%if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
++%if 0%{?fedora} > 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
  %global with_selinux 1
  %endif
  
@@ -19,7 +19,7 @@ index 2f337e8..629ba23 100644
 +
  Name: %{repo}
  Version: 1.7.0
- Release: 2.git%{d_shortcommit}%{?dist}
+ Release: 5.git%{d_shortcommit}%{?dist}
  Summary: Automates deployment of containerized applications
  License: ASL 2.0
  URL: http://www.%{repo}.com
