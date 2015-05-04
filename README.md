@@ -1,5 +1,6 @@
 # fedora-docker-gccgo
 Fedora docker(and BR) specfiles modified to use gcc-go
+Also including changes that makes docker build on AArch64(using gcc-go, not yet send to upstream), but some test are failing there. It defenitely needs further investigation.
 
 ## Repos
 COPR(x86) repo for Fedora 22(23):
@@ -14,7 +15,7 @@ https://repos.fedorapeople.org/repos/jcajka/docker-gccgo/
 * jcajka/fedora22-s390x
 
 ## Notes
-docker.spec and docker-gccgo.patch are for docker package 
+docker.spec, docker-gccgo.patch and docker-gccgo-aarch.patch are for docker package 
 based on:
 http://pkgs.fedoraproject.org/cgit/docker.git/commit/?id=faf933808f65176947ea04754582a31aedb1fdb3
 
