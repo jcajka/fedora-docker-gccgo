@@ -1,5 +1,5 @@
 # fedora-docker-gccgo
-Fedora docker(and BR) specfiles modified to use gcc-go
+Fedora docker(and BR) specfiles modified to use gcc-go.
 Also including changes that makes docker build on AArch64(using gcc-go, not yet send to upstream), but some test are failing there. It defenitely needs further investigation.
 
 ## Repos
