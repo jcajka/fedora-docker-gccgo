@@ -6,11 +6,14 @@
 %global import_path     %{provider}.%{provider_tld}/%{project}/%{repo}
 %global commit          77efab57b2f74dd3f9051c79752b2e8995c8b789
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
-%global gopath /usr/share/gocode
+%global gccgo_version  >= 5
+%global golang_version >= 1.2.1-3
 
 Name:       golang-%{provider}-%{project}-%{repo}
 Version:    1.2
-Release:    5%{?dist}
+Release:    5r%{?dist}
+# Be ahead of Fedora
+Epoch:      1
 Summary:    Markdown processor implemented in Go
 License:    BSD
 URL:        https://%{import_path}
@@ -25,9 +28,9 @@ ExclusiveArch:  %{ix86} x86_64 %{arm}
 %{summary}
 
 %package devel
-BuildRequires:  gcc-go
+%buildrequiresgo
 BuildRequires:  golang(github.com/shurcooL/sanitized_anchor_name)
-Requires:   gcc-go
+%requiresgo
 Requires:   golang(github.com/shurcooL/sanitized_anchor_name)
 Summary:    Markdown processor implemented in Go
 Provides:   golang(%{import_path}) = %{version}-%{release}
@@ -50,7 +53,8 @@ cp -pav *.go %{buildroot}%{gopath}/src/%{import_path}/
 cp -pav upskirtref/* %{buildroot}%{gopath}/src/%{import_path}/upskirtref/
 
 %check
-GOPATH=%{gopath}:%{buildroot}%{gopath} go test -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS" %{import_path}
+
+%gotest %{import_path}
 
 %files devel
 %doc README.md
