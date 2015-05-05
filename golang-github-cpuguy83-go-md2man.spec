@@ -6,11 +6,14 @@
 %global import_path     %{provider}.%{provider_tld}/%{project}/%{repo}
 %global commit          2831f11f66ff4008f10e2cd7ed9a85e3d3fc2bed
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
-%global gopath /usr/share/gocode
+%global gccgo_version  >= 5
+%global golang_version >= 1.2.1-3
 
 Name:           golang-%{provider}-%{project}-%{repo}
 Version:        1
-Release:        4%{?dist}
+Release:        4r%{?dist}
+# Be ahead of Fedora
+Epoch:          1
 Summary:        Process markdown into manpages
 License:        MIT
 URL:            https://%{import_path}
@@ -22,9 +25,9 @@ Provides:       %{repo} = %{version}-%{release}
 manpages.
 
 %package devel
-BuildRequires:  gcc-go
+%buildrequiresgo
 BuildRequires:  golang(github.com/russross/blackfriday)
-Requires:       gcc-go
+%requiresgo
 BuildArch:      noarch
 Summary:        A golang registry for global request variables
 Provides:       golang(%{import_path}) = %{version}-%{release}
@@ -44,9 +47,12 @@ which use %{project}/%{repo}.
 mkdir -p _build/src/%{provider}.%{provider_tld}/%{project}
 ln -s $(pwd) ./_build/src/%{import_path}
 
-export GOPATH=$(pwd)/_build:%{gopath}
+BDIR=$(pwd)/_build
+
 pushd $(pwd)/_build/src
-go build -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS" %{import_path}
+
+%gobuild -p "$BDIR":%gopath %{import_path}
+
 popd
 
 %install
