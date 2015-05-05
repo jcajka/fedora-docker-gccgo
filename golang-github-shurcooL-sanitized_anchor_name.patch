@@ -1,30 +1,42 @@
---- golang-github-shurcooL-sanitized_anchor_name/golang-github-shurcooL-sanitized_anchor_name.spec	2015-04-17 09:43:54.057573037 +0200
-+++ golang-github-shurcooL-sanitized_anchor_name.spec	2015-04-17 09:51:21.841067615 +0200
-@@ -6,6 +6,7 @@
+diff --git a/golang-github-shurcooL-sanitized_anchor_name.spec b/golang-github-shurcooL-sanitized_anchor_name.spec
+index 70bd4d3..d3ef001 100644
+--- a/golang-github-shurcooL-sanitized_anchor_name.spec
++++ b/golang-github-shurcooL-sanitized_anchor_name.spec
+@@ -6,10 +6,14 @@
  %global import_path     %{provider}.%{provider_tld}/%{project}/%{repo}
  %global commit          8e87604bec3c645a4eeaee97dfec9f25811ff20d
  %global shortcommit     %(c=%{commit}; echo ${c:0:7})
-+%global gopath /usr/share/gocode
++%global gccgo_version  >= 5
++%global golang_version >= 1.2.1-3 
  
  Name:           golang-%{provider}-%{project}-%{repo}
  Version:        0
-@@ -25,8 +26,8 @@
+-Release:        0.1.git%{shortcommit}%{?dist}
++Release:        0.1.rgit%{shortcommit}%{?dist}
++# Be ahead of Fedora
++Epoch:          1
+ Summary:        Package sanitized_anchor_name provides a func to create sanitized anchor names
+ License:        MIT
+ URL:            https://%{import_path}
+@@ -25,8 +29,9 @@ ExclusiveArch:  %{ix86} x86_64 %{arm}
  %{summary}
  
  %package devel
 -BuildRequires:  golang >= 1.2.1-3
 -Requires:       golang >= 1.2.1-3
-+BuildRequires:  gcc-go
-+Requires:       gcc-go
++
++%buildrequiresgo
++%requiresgo
  Summary:        %{summary}
  Provides:       golang(%{import_path}) = %{version}-%{release}
  
-@@ -47,7 +48,7 @@
+@@ -47,7 +52,8 @@ install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
  cp -pav *.go %{buildroot}/%{gopath}/src/%{import_path}/
  
  %check
 -GOPATH=%{buildroot}/%{gopath}:%{gopath} go test %{import_path}
-+GOPATH=%{buildroot}/%{gopath}:%{gopath} go test -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS" %{import_path}
++
++%gotest %{import_path}
  
  %files devel
  %doc README.md LICENSE
