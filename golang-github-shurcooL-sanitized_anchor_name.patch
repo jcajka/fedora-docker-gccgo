@@ -1,5 +1,5 @@
 diff --git a/golang-github-shurcooL-sanitized_anchor_name.spec b/golang-github-shurcooL-sanitized_anchor_name.spec
-index 70bd4d3..d3ef001 100644
+index 70bd4d3..6b5b437 100644
 --- a/golang-github-shurcooL-sanitized_anchor_name.spec
 +++ b/golang-github-shurcooL-sanitized_anchor_name.spec
 @@ -6,10 +6,14 @@
@@ -12,7 +12,7 @@ index 70bd4d3..d3ef001 100644
  Name:           golang-%{provider}-%{project}-%{repo}
  Version:        0
 -Release:        0.1.git%{shortcommit}%{?dist}
-+Release:        0.1.rgit%{shortcommit}%{?dist}
++Release:        0.1.sgit%{shortcommit}%{?dist}
 +# Be ahead of Fedora
 +Epoch:          1
  Summary:        Package sanitized_anchor_name provides a func to create sanitized anchor names

@@ -11,7 +11,7 @@
 
 Name:           golang-%{provider}-%{project}-%{repo}
 Version:        0
-Release:        0.1.rgit%{shortcommit}%{?dist}
+Release:        0.1.sgit%{shortcommit}%{?dist}
 # Be ahead of Fedora
 Epoch:          1
 Summary:        Package sanitized_anchor_name provides a func to create sanitized anchor names

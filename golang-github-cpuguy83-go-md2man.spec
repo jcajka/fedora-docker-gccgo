@@ -11,7 +11,7 @@
 
 Name:           golang-%{provider}-%{project}-%{repo}
 Version:        1
-Release:        4r%{?dist}
+Release:        4s%{?dist}
 # Be ahead of Fedora
 Epoch:          1
 Summary:        Process markdown into manpages

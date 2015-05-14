@@ -11,7 +11,7 @@
 
 Name:       golang-%{provider}-%{project}-%{repo}
 Version:    1.2
-Release:    5r%{?dist}
+Release:    5s%{?dist}
 # Be ahead of Fedora
 Epoch:      1
 Summary:    Markdown processor implemented in Go

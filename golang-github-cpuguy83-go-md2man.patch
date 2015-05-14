@@ -1,5 +1,5 @@
 diff --git a/golang-github-cpuguy83-go-md2man.spec b/golang-github-cpuguy83-go-md2man.spec
-index 877bc3d..4a7a496 100644
+index 877bc3d..d9e2e31 100644
 --- a/golang-github-cpuguy83-go-md2man.spec
 +++ b/golang-github-cpuguy83-go-md2man.spec
 @@ -6,15 +6,18 @@
@@ -12,7 +12,7 @@ index 877bc3d..4a7a496 100644
  Name:           golang-%{provider}-%{project}-%{repo}
  Version:        1
 -Release:        4%{?dist}
-+Release:        4r%{?dist}
++Release:        4s%{?dist}
 +# Be ahead of Fedora
 +Epoch:          1
  Summary:        Process markdown into manpages

@@ -1,5 +1,5 @@
 diff --git a/golang-github-russross-blackfriday.spec b/golang-github-russross-blackfriday.spec
-index 14e7a6f..4d348a1 100644
+index 14e7a6f..a1c5a92 100644
 --- a/golang-github-russross-blackfriday.spec
 +++ b/golang-github-russross-blackfriday.spec
 @@ -6,10 +6,14 @@
@@ -12,7 +12,7 @@ index 14e7a6f..4d348a1 100644
  Name:       golang-%{provider}-%{project}-%{repo}
  Version:    1.2
 -Release:    5%{?dist}
-+Release:    5r%{?dist}
++Release:    5s%{?dist}
 +# Be ahead of Fedora
 +Epoch:      1
  Summary:    Markdown processor implemented in Go
